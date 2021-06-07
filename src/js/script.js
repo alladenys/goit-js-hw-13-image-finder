@@ -52,3 +52,10 @@ export default function onOpenModal(event) {
 refs.galleryList.addEventListener('click', onOpenModal);
 refs.form.addEventListener('submit', getSubmitForm);
 refs.loadMore.addEventListener('click', moreImages);
+
+setTimeout(() => {
+  refs.loadMore.scrollIntoView({
+    behavior: 'smooth',
+    block: 'end',
+  });
+}, 1000);
