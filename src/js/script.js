@@ -17,6 +17,7 @@ export const getSubmitForm = e => {
   refs.galleryList.innerHTML = '';
   inputValue = e.target.elements.query.value;
   scrollPage();
+  page = 1;
   if (inputValue.length) {
     apiService(inputValue, page, API_KEY)
       .then(images => {
