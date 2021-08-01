@@ -16,12 +16,16 @@ export const getSubmitForm = e => {
   e.preventDefault();
   refs.galleryList.innerHTML = '';
   inputValue = e.target.elements.query.value;
-  scrollPage();
+  if (inputValue.length === 0) {
+    Notify.info('Sorry, there are no images matching your search query. Please try again.');
+    return;
+  }
+  // scrollPage();
   page = 1;
   if (inputValue.length) {
     apiService(inputValue, page, API_KEY)
       .then(images => {
-        images.length
+        images.length > 0
           ? (refs.loadMore.style.display = 'block')
           : (refs.loadMore.style.display = 'none');
         markupTpl(images);
