@@ -1,9 +1,17 @@
+import Notiflix from 'notiflix';
 import markupTpl from './markupTpl';
 import apiService from './apiService';
 import refs from './refs';
 
 import * as basicLightbox from 'basiclightbox';
 import 'basiclightbox/dist/basicLightbox.min.css';
+
+Notiflix.Notify.init({
+  distance: '5%',
+  fontSize: '15px',
+  width: '350px',
+  showOnlyTheLastOne: true,
+});
 
 const API_KEY = '21713513-de4fa038d3971b80a05884d99';
 
@@ -14,14 +22,15 @@ refs.loadMore.style.display = 'none';
 
 export const getSubmitForm = e => {
   e.preventDefault();
-  refs.galleryList.innerHTML = '';
+  clearGallery();
+  page = 1;
   inputValue = e.target.elements.query.value;
   if (inputValue.length === 0) {
-    Notify.info('Sorry, there are no images matching your search query. Please try again.');
-    return;
+    return Notiflix.Notify.warning(
+      'Sorry, there are no images matching your search query. Please try again.',
+    );
   }
-  // scrollPage();
-  page = 1;
+
   if (inputValue.length) {
     apiService(inputValue, page, API_KEY)
       .then(images => {
@@ -29,10 +38,15 @@ export const getSubmitForm = e => {
           ? (refs.loadMore.style.display = 'block')
           : (refs.loadMore.style.display = 'none');
         markupTpl(images);
+        Notiflix.Notify.success(`Hooray! We found all popular images.`);
       })
-      .catch(error => console.log(error));
+      .catch(error => console.log('Something went wrong', error.message));
   }
 };
+
+function clearGallery() {
+  refs.galleryList.innerHTML = '';
+}
 
 export const moreImages = () => {
   page += 1;
@@ -40,13 +54,13 @@ export const moreImages = () => {
   apiService(inputValue, page, API_KEY)
     .then(images => {
       markupTpl(images);
-      scrollTo({
-        top: document.documentElement.offsetHeight - 1600,
-        behavior: 'smooth',
-        block: 'end',
-      });
+      // scrollTo({
+      //   top: document.documentElement.offsetHeight - 1600,
+      //   behavior: 'smooth',
+      //   block: 'end',
+      // });
     })
-    .catch(error => caonsole.log(error));
+    .catch(error => caonsole.log('Something went wrong', error.message));
 };
 
 export default function onOpenModal(event) {
@@ -71,6 +85,6 @@ function scrollPage() {
       });
     }, 1000);
   } catch (error) {
-    console.log(error);
+    console.log('Something went wrong', error.message);
   }
 }
